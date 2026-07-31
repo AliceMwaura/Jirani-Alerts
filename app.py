@@ -152,7 +152,7 @@ with tab_feed:
             if e["alert_text"]:
                 st.info(f"📤 {e['alert_text']}")
 
-               st.caption(f"{e['created_at']}")
+            st.caption(f"{e['created_at']}")
         st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Broadcast history ---
