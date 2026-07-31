@@ -1,24 +1,7 @@
 """
-app.py
 
-Mzalendo — Full demo application (Streamlit).
+Jirani Alerts
 
-This single file combines all three pieces of the team's architecture into
-one working demo:
-  - AI & SMS Intelligence (gemma_engine.py)
-  - SMS Backend & Database (database.py, simulated SMS input in place of a
-    real gateway)
-  - Demo Experience (this dashboard: incoming messages, confidence meter,
-    live event feed, event cards, broadcast history, verified sources,
-    stats)
-
-Run with:
-    pip install streamlit google-genai numpy
-    streamlit run app.py
-
-You'll be prompted for a Gemini API key in the sidebar on first load
-(get one free at https://aistudio.google.com/apikey). It is kept only in
-memory for the session and never written to disk.
 """
 
 import streamlit as st
@@ -43,8 +26,8 @@ if "client_ready" not in st.session_state:
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
-    st.title("📡 Mzalendo")
-    st.caption("Offline-friendly civic alert aggregator")
+    st.title("📡 Jirani Alerts")
+    st.caption("AI powered, SMS based community Alerts")
 
     st.divider()
     st.subheader("Setup")
@@ -78,7 +61,7 @@ with st.sidebar:
 
     sms_text = st.text_area(
         "Message text",
-        placeholder="e.g. power is out near rongai market since morning",
+        placeholder="e.g. Polio vaccination happening in Muguga",
         height=100,
     )
 
@@ -112,6 +95,9 @@ with st.sidebar:
 # ---------------------------------------------------------------------------
 
 st.title("Live Dashboard")
+st.caption("📵 No Internet. No Problem. Stay Connected")
+
+stats = db.get_stats()
 
 stats = db.get_stats()
 col1, col2, col3, col4 = st.columns(4)
@@ -132,6 +118,13 @@ with tab_feed:
     if not events:
         st.caption("No events yet — send a simulated SMS from the sidebar to get started.")
     for e in events:
+        urgency_color = {"high": "#e03131", "medium": "#f0a500", "low": "#2f9e44"}.get(
+            (e["urgency"] or "").lower(), "#868e96"
+        )
+        st.markdown(
+            f'<div style="border-left: 6px solid {urgency_color}; padding-left: 12px; margin-bottom: 8px;">',
+            unsafe_allow_html=True,
+        )
         with st.container(border=True):
             header_col, badge_col = st.columns([4, 1])
             with header_col:
@@ -159,7 +152,9 @@ with tab_feed:
             if e["alert_text"]:
                 st.info(f"📤 {e['alert_text']}")
 
-            st.caption(f"{e['created_at']}")
+           st.caption(f"{e['created_at']}")
+        st.markdown("</div>", unsafe_allow_html=True)
+
 
 # --- Broadcast history ---
 with tab_broadcasts:
